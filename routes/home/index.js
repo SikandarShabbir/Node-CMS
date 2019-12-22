@@ -7,7 +7,11 @@ router.all('/*', (request, response, next)=>{
 });
 
 router.get('/', (request, response)=>{
-	response.render('home/index');
+	request.session.name = "Mr. Sikandar";
+	if (request.session.name) {
+		console.log(request.session);
+		response.render('home/index');		
+	}
 });
 router.get('/about', (request, response)=>{
 	response.render('home/about');

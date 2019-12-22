@@ -47,6 +47,7 @@ router.post('/create', (request, response)=>{
 	})
 	createPost.save()
 	.then( postCreated => {
+		request.flash('success', 'Post Created Successfully');
 		console.log("Success: "+postCreated);
 		response.redirect('/admin/posts');
 	})
@@ -89,8 +90,18 @@ router.put('/edit/:id', (request, response)=> {
 		post.status = request.body.status;
 		post.allowComments = allowComments;
 		post.body = request.body.body;
+
+		if (!isEmpty(request.files)) {		
+			let file = request.files.file;
+			fileName = Date.now()+'-'+file.name;
+			post.file = fileName;
+			file.mv('./public/uploads/' + fileName , (error)=>{
+				if (error) {throw error;}
+			});		
+		}
 		post.save().then(updatedPost=> {
 			console.log(updatedPost);
+			request.flash('success','Post Updated Successfully');
 			response.redirect('/admin/posts');
 		})		
 	})
@@ -104,6 +115,7 @@ router.delete('/delete/:id', (request, response)=> {
 	Post.findOne({_id: request.params.id}).then( post => {
 		fs.unlink(uploadDir + post.file, (error)=>{});
 		post.remove();
+		request.flash('success','Post Deleted Successfully');
 		response.redirect('/admin/posts');	
 	})
 	.catch(error =>{
