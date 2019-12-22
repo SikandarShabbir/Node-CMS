@@ -13,6 +13,17 @@ router.all('/*', (request, response, next)=>{
 });
 
 router.post('/create', (request, response)=>{
+	let errors = [];
+	if (!request.body.title) {
+		errors.push({message: "Please enter title"});
+	}
+	if (!request.body.body) {
+		errors.push({message: "Please enter body"});
+	}
+	if (errors.length > 0) {
+		response.render('admin/posts/create',{ errors: errors });
+	}
+
 	let fileName = '';
 	if (!isEmpty(request.files)) {		
 		let file = request.files.file;
