@@ -18,8 +18,8 @@ app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
 app.use(upload());
 app.use(methodOverride('_method'));
-const {select} = require('./helpers/helpers.js');
-app.engine('handlebars', exphbs({defaultLayout: 'home', helpers: {select:select}}));
+const {select, generateDate} = require('./helpers/helpers.js');
+app.engine('handlebars', exphbs({defaultLayout: 'home', helpers: {select:select, generateDate: generateDate}}));
 app.set('view engine', 'handlebars');
 
 app.use(session({

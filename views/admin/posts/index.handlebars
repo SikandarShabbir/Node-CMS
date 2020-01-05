@@ -8,6 +8,7 @@
 			<th>Status</th>
 			<th>Allow Comments</th>
 			<th>Body</th>
+			<th>Date</th>
 			<th colspan="2">Actions</th>
 		</tr>
 	</thead>
@@ -20,6 +21,7 @@
 			<td>{{status}}</td>
 			<td>{{allowComments}}</td>
 			<td>{{body}}</td>
+			<td>{{generateDate date "MMMM Do YYYY"}}</td>
 			<td><a href="/admin/posts/edit/{{id}}" class="btn btn-info">Edit</a></td>
 			<td>
 				<form action="/admin/posts/delete/{{id}}?_method=DELETE" method="post" accept-charset="utf-8">
