@@ -1,7 +1,7 @@
-
 const express = require('express');
 const router = express.Router();
 const Post = require('../../models/Post');
+const Category = require('../../models/Category');
 const faker = require('faker');
 const fs = require('fs');
 const path = require('path');
@@ -41,6 +41,7 @@ router.post('/create', (request, response)=>{
 	const createPost = new Post({
 		title: request.body.title,
 		status: request.body.status,
+		category: request.body.category,
 		allowComments: allowComments,
 		body: request.body.body,
 		file: fileName
@@ -57,11 +58,15 @@ router.post('/create', (request, response)=>{
 });
 
 router.get('/create', (request, response)=>{
-	response.render('admin/posts/create');
+	Category.find({}).then(categories =>{
+			response.render('admin/posts/create', {categories:categories});
+		})
 });
 
 router.get('/', (request, response)=>{
-	Post.find({}).then( posts => {
+	Post.find({})
+	.populate('category')
+	.then( posts => {
 		response.render('admin/posts', {posts: posts});		
 	})
 	.catch(error =>{
@@ -71,7 +76,9 @@ router.get('/', (request, response)=>{
 
 router.get('/edit/:id', (request, response)=> {
 	Post.findOne({_id: request.params.id}).then( post => {
-		response.render('admin/posts/edit', {post: post});		
+		Category.find({}).then(categories =>{
+			response.render('admin/posts/edit', {categories:categories, post: post});
+		})		
 	})
 	.catch(error =>{
 		console.log("Error: "+error);
@@ -88,6 +95,7 @@ router.put('/edit/:id', (request, response)=> {
 		}
 		post.title = request.body.title;
 		post.status = request.body.status;
+		post.category = request.body.category;
 		post.allowComments = allowComments;
 		post.body = request.body.body;
 

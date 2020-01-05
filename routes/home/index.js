@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const Post = require('../../models/Post.js');
+const Category = require('../../models/Category.js');
 router.all('/*', (request, response, next)=>{
 	request.app.locals.layout = 'home';
 	next();
@@ -9,7 +10,9 @@ router.all('/*', (request, response, next)=>{
 router.get('/', (request, response)=>{
 	request.session.name = "Mr. Sikandar";
 	Post.find({}).then(posts => {
-		response.render('home/index',{posts: posts});
+		Category.find({}).then(categories =>{
+			response.render('home/index', {posts: posts, categories:categories});
+		})
 	});
 });
 router.get('/about', (request, response)=>{
@@ -24,7 +27,9 @@ router.get('/register', (request, response)=>{
 router.get('/post/:id', (request, response)=>{
 	Post.find({_id: request.params.id})
 	.then(post=>{
-		response.render('home/post',{post:post});		
+		Category.find({}).then(categories =>{
+			response.render('home/post', {post: post, categories:categories});
+		})		
 	});
 });
 
