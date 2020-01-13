@@ -1,0 +1,43 @@
+<h1> Create Posts </h1>
+{{#each errors}}
+	<div class="alert alert-danger">
+		{{message}}
+	</div>
+{{/each}}
+<div class="col-md-8 offset-1">
+<form action="/admin/posts/create" method="post" accept-charset="utf-8" enctype="multipart/form-data">
+	<div class="form-group">
+		<label for="">Title</label>
+		<input type="text" name="title" class="form-control" placeholder="ENter Title">
+	</div>
+	<div class="form-group">
+		<label for="">File</label>
+		<input type="file" name="file" class="form-control">
+	</div>
+	<div class="form-group">
+		<label for="">Status</label>
+		<select name="status" class="form-control">
+			<option value="public">Public</option>
+			<option value="private">Private</option>
+			<option value="draft">Draft</option>			
+		</select>
+	</div>
+	<div class="form-group">
+		<label for="">Categories</label>
+		<select name="category" class="form-control">
+			{{#each categories}}
+				<option value="{{id}}">{{name}}</option>
+			{{/each}}	
+		</select>
+	</div>
+	<div class="form-group">
+		<label for="">Allow Comments</label>
+		<input type="checkbox" name="allowComments" class="checkbox-inline">
+	</div>
+	<div class="form-group">
+		<label for="">Body</label>
+		<textarea name="body" id="body" class="form-control" cols="30" rows="5" placeholder="Enter Description"></textarea>
+	</div>
+	<button type="submit" class="btn btn-primary">Save</button>
+</form>
+</div>
