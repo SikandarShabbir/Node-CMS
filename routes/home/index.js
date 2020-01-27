@@ -44,28 +44,41 @@ router.post('/register', (request, response)=>{
 		errors.push({message: "Passwords dont match"});
 	}
 	if (errors.length > 0) {
-		response.render('home/register',{ errors: errors });
+		response.render('home/register',{ 
+			errors: errors,
+			firstName: request.body.firstName,
+			lastName: request.body.lastName,
+			email: request.body.email,
+		});
 	}else{
-		const createUser = new User({
-		firstName: request.body.firstName,
-		lastName: request.body.lastName,
-		email: request.body.email,
-		password: request.body.password,
-		}) 
-		bcrypt.genSalt(10, (err, salt)=>{
-			bcrypt.hash(createUser.password, salt, (err, hash)=>{
-				createUser.password = hash;
-				createUser.save()
-				.then( createUser => {
-					request.flash('success', 'User Created Successfully please login.');
-					// console.log("Success: "+createUser);
-					response.render('home/login');
+		User.findOne({email: request.body.email}).then(user => {
+			if (user) {
+				request.flash('error', 'This user alredy exist please login.');
+				response.redirect('/login');
+			} else {
+				const createUser = new User({
+				firstName: request.body.firstName,
+				lastName: request.body.lastName,
+				email: request.body.email,
+				password: request.body.password,
+				}) 
+				bcrypt.genSalt(10, (err, salt)=>{
+					bcrypt.hash(createUser.password, salt, (err, hash)=>{
+						createUser.password = hash;
+						createUser.save()
+						.then( createUser => {
+							request.flash('success', 'User Created Successfully please login.');
+							console.log("Success: "+createUser);
+							response.render('home/login');
+						})
+						.catch(error =>{
+							console.log("Error: "+error);
+						});
+					})
 				})
-				.catch(error =>{
-					console.log("Error: "+error);
-				});
-			})
-		})
+			}
+		});
+		
 		
 	}
 
