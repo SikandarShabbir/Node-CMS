@@ -6,8 +6,9 @@ const faker = require('faker');
 const fs = require('fs');
 const path = require('path');
 const {isEmpty, uploadDir} = require('../../helpers/upload_helper.js');
+const {userAuthenticated} = require('../../helpers/authentication');
 
-router.all('/*', (request, response, next)=>{
+router.all('/*', userAuthenticated,(request, response, next)=>{
 	request.app.locals.layout = 'admin';
 	next();
 });

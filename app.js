@@ -9,8 +9,10 @@ const methodOverride = require('method-override');
 const upload = require('express-fileupload');
 const session = require('express-session');
 const flash = require('connect-flash');
+const {mongoDbUrl} = require('./config/database');
+const passport = require('passport');
 
-mongoose.connect('mongodb://localhost:27017/cms', { useNewUrlParser: true }).then(db => {
+mongoose.connect(mongoDbUrl, {useNewUrlParser: true, useUnifiedTopology: true}).then(db => {
 	console.log("Connection established");
 }).catch( error => { console.log(error);});
 
@@ -30,9 +32,13 @@ app.use(session({
   // cookie: { secure: true }
 }));
 app.use(flash());
-app.use((request, response, next)=>{
-	response.locals.success = request.flash('success');
-	response.locals.error = request.flash('error');
+app.use(passport.initialize());
+app.use(passport.session());
+
+app.use((req, res, next)=>{
+	res.locals.user = req.user || null;
+	res.locals.success = req.flash('success');
+	res.locals.error = req.flash('error');
 	next();
 });
 
