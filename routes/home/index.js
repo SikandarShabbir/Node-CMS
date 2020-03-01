@@ -113,7 +113,7 @@ router.post('/register', (req, res)=>{
 	}	
 });
 router.get('/post/:id', (req, res)=>{
-	Post.find({_id: req.params.id})
+	Post.findOne({_id: req.params.id})
 	.then(post=>{
 		Category.find({}).then(categories =>{
 			res.render('home/post', {post: post, categories:categories});
