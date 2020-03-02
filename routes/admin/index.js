@@ -8,7 +8,9 @@ router.all('/*', (request, response, next)=>{
 	next();
 });
 router.get('/', (request, response)=>{
-	response.render('admin/index');
+	Post.count({}).then(posts => {
+		response.render('admin/index',{posts:posts});		
+	});
 });
 router.get('/dashboard', (request, response)=>{
 	response.render('home/dashboard');
