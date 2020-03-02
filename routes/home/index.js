@@ -100,7 +100,6 @@ router.post('/register', (req, res)=>{
 						createUser.save()
 						.then( createUser => {
 							req.flash('success', 'User Created Successfully please login.');
-							console.log("Success: "+createUser);
 							res.render('home/login');
 						})
 						.catch(error =>{
@@ -112,13 +111,16 @@ router.post('/register', (req, res)=>{
 		});		
 	}	
 });
-router.get('/post/:id', (req, res)=>{
-	Post.findOne({_id: req.params.id})
+router.get('/post/:slug', (req, res)=>{
+	Post.findOne({slug: req.params.slug})
 	.then(post=>{
 		Category.find({}).then(categories =>{
 			res.render('home/post', {post: post, categories:categories});
 		})		
-	});
+	})
+	.catch(err =>{
+		console.log(err);
+	})
 });
 router.get('/logout', (req, res) =>{
   req.logout();

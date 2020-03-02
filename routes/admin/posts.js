@@ -50,7 +50,6 @@ router.post('/create', (request, response)=>{
 	createPost.save()
 	.then( postCreated => {
 		request.flash('success', 'Post Created Successfully');
-		console.log("Success: "+postCreated);
 		response.redirect('/admin/posts');
 	})
 	.catch(error =>{
@@ -109,7 +108,6 @@ router.put('/edit/:id', (request, response)=> {
 			});		
 		}
 		post.save().then(updatedPost=> {
-			console.log(updatedPost);
 			request.flash('success','Post Updated Successfully');
 			response.redirect('/admin/posts');
 		})		

@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+URLSlugs = require('mongoose-url-slugs');
 const Schema = mongoose.Schema;
 
 const PostSchema = new Schema({
@@ -28,7 +29,10 @@ const PostSchema = new Schema({
 	date: {
 		type: Date,
 		default: Date.now()
+	},
+	slug: {
+		type: String
 	}
 });
-
+PostSchema.plugin(URLSlugs('title',{field: 'slug'}));
 module.exports = mongoose.model('posts', PostSchema);
