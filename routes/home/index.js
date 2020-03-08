@@ -1,4 +1,5 @@
 const express = require('express');
+const app = express();
 const router = express.Router();
 const Post = require('../../models/Post.js');
 const Category = require('../../models/Category.js');
@@ -6,20 +7,53 @@ const User = require('../../models/User.js');
 const bcrypt = require('bcryptjs');
 const passport = require('passport');
 const localStrategy = require('passport-local').Strategy;
+const paginate = require('express-paginate');
 
 router.all('/*', (req, res, next)=>{
 	req.app.locals.layout = 'home';
+	if (req.query.limit <= 10) req.query.limit = 10;
 	next();
 });
 
-router.get('/', (req, res)=>{
-	req.session.name = "Mr. Sikandar";
-	Post.find({}).then(posts => {
-		Category.find({}).then(categories =>{
-			res.render('home/index', {posts: posts, categories:categories});
+router.use(paginate.middleware(10, 50));
+router.get('/', async (req, res, next) => {
+
+  try { 
+    const [ posts, itemCount ] = await Promise.all([
+      Post.find({}).limit(req.query.limit).skip(req.skip).lean().exec(),
+      Post.count({})
+    ]);
+ 
+    const pageCount = Math.ceil(itemCount / req.query.limit);
+
+    if (itemCount > 0) {
+    	Category.find({}).then(categories => {
+    		res.render('home/index', {
+	        posts: posts,
+	        pageCount,
+	        itemCount,
+	        pages: paginate.getArrayPages(req)(5, pageCount, req.query.page),
+	        categories:categories
+	      });
 		})
-	});
+    }
+ 
+  } catch (err) {
+    next(err);
+  }
+ 
 });
+
+// router.get('/', (req, res)=>{
+// 	req.session.name = "Mr. Sikandar";
+
+// 	Post.find({}).then(posts => {
+// 		Category.find({}).then(categories =>{
+// 			res.render('home/index', {posts: posts, categories:categories});
+// 		})
+// 	});
+// });
+
 router.get('/about', (req, res)=>{
 	res.render('home/about');
 });
